@@ -1,3 +1,5 @@
+use crate::Ball;
+use crate::Pad;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -27,25 +29,25 @@ impl UI {
         Ok(UI { sdl, canvas })
     }
 
-    fn draw_ball(&mut self) {
+    fn draw_ball(&mut self, ball: &Ball) {
         self.canvas.set_draw_color(Color::RGB(255, 255, 255));
-        if let Err(_) = self.canvas.fill_rect(Rect::new(200, 200, 10, 10)) {
+        self.canvas
+            .fill_rect(Rect::new(ball.x, ball.y, ball.size, ball.size))
+            .expect("impossible to draw the ball");
+    }
+
+    fn draw_pad(&mut self, pad: &Pad) {
+        self.canvas.set_draw_color(Color::RGB(255, 255, 255));
+        if let Err(_) = self.canvas.fill_rect(Rect::new(pad.x, pad.y, pad.width, pad.height)) {
             println!("impossible to draw the ball");
         }
     }
 
-    fn draw_pad(&mut self) {
-        self.canvas.set_draw_color(Color::RGB(255, 255, 255));
-        if let Err(_) = self.canvas.fill_rect(Rect::new(200, 580, 70, 10)) {
-            println!("impossible to draw the ball");
-        }
-    }
-
-    pub fn draw(&mut self) {
+    pub fn draw(&mut self, ball: &Ball, pad: &Pad) {
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
-        self.draw_ball();
-        self.draw_pad();
+        self.draw_ball(ball);
+        self.draw_pad(pad);
         self.canvas.present();
     }
 
