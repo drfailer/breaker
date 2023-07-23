@@ -20,21 +20,10 @@ fn run() -> Result<(), String> {
     let mut right = false;
     let mut ball = ball::Ball::new(230, 570, 10, 0.707, -0.707, 3.5);
     let mut pad = pad::Pad::new(200, 580, 70, 10, 8);
-    let mut bricks: Vec<brick::Brick> = Vec::new();
     let row_size = (MAP_WIDTH / BRICK_SIZE) as i32;
     let columns_number = 10;
     let bricks_number = row_size * columns_number;
-
-    // create the bricks
-    for i in 0..bricks_number {
-        bricks.push(brick::Brick {
-            x: (i % row_size) * BRICK_SIZE as i32,
-            y: (i / row_size) * BRICK_SIZE as i32,
-            score: 1,
-            size: BRICK_SIZE,
-            index: i as usize,
-        });
-    }
+    let mut bricks = brick::Brick::generate_bricks(bricks_number, BRICK_SIZE, row_size);
 
     ui.draw(&ball, &pad, &bricks);
     'mainloop: loop {

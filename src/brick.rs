@@ -17,4 +17,18 @@ impl Brick {
         }
         output
     }
+
+    pub fn generate_bricks(number: i32, brick_size: u32, row_size: i32) -> Vec<Self> {
+        let mut bricks: Vec<Self> = Vec::new();
+        for i in 0..number {
+            bricks.push(Self {
+                x: (i % row_size) * brick_size as i32,
+                y: (i / row_size) * brick_size as i32,
+                score: 1,
+                size: brick_size,
+                index: i as usize,
+            });
+        }
+        bricks
+    }
 }
