@@ -1,10 +1,11 @@
-use crate::Ball;
-use crate::Pad;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use sdl2::{EventPump, Sdl};
+
+use crate::ball::Ball;
+use crate::pad::Pad;
 
 pub struct UI {
     sdl: Sdl,
