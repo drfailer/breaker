@@ -51,8 +51,8 @@ impl UI {
                 self.canvas.set_draw_color(Color::RGB(70, 170, 250));
                 self.canvas
                     .fill_rect(Rect::new(
-                        (brick.x * brick.size as i32) + 1,
-                        (brick.y * brick.size as i32) + 1,
+                        brick.x + 1,
+                        brick.y + 1,
                         brick.size - 2,
                         brick.size - 2,
                     ))

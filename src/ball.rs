@@ -1,4 +1,4 @@
-use crate::pad::Pad;
+use crate::{pad::Pad, Brick};
 
 /* The direction is a 2D vector where the first point is always at (0, 0).
  * The second point is somewhere on the trigonometric circle around (0, 0). For
@@ -16,6 +16,29 @@ pub struct Ball {
     pub size: u32,
     pub direction: Direction,
     pub speed: f32,
+}
+
+fn point_in_bound(x: i32, y: i32, brick: &Brick) -> bool {
+    let mut output = false;
+    if brick.score > 0 {
+        output = x >= brick.x
+            && x <= brick.x + brick.size as i32
+            && y >= brick.y
+            && y <= brick.y + brick.size as i32;
+    }
+    output
+}
+
+fn points_in_bound(x: i32, y: i32, size: u32, brick: &Brick) -> [bool; 4] {
+    let i32_size = size as i32;
+    let mid = i32_size / 2;
+    [
+        (x + mid, y),
+        (x + i32_size, y + mid),
+        (x + mid, y + i32_size),
+        (x, y + mid),
+    ]
+    .map(|(a, b)| point_in_bound(a, b, brick))
 }
 
 impl Ball {
@@ -36,12 +59,13 @@ impl Ball {
     /* compute the next position of the ball
      * TODO: take the pad in count
      */
-    pub fn update(&mut self, pad: &Pad) {
+    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) {
         let map_w = (crate::MAP_WIDTH as i32) - (self.size as i32);
         let map_h = (crate::MAP_HIGHT as i32) - (self.size as i32);
         let pad_xmin = pad.x;
         let pad_xmax = pad.x + (pad.width as i32);
         let pad_y = 580 - self.size as i32;
+        let mut brick_index: Option<usize> = None;
 
         self.x += self.get_next(self.direction.x);
         self.y += self.get_next(self.direction.y);
@@ -65,6 +89,23 @@ impl Ball {
         } else if self.y >= map_h {
             self.y = map_h;
             self.direction.y = -self.direction.y;
+        }
+
+        for brick in bricks.into_iter() {
+            let corners = points_in_bound(self.x, self.y, self.size, &brick);
+            if corners.contains(&true) {
+                brick_index = Some(brick.index);
+                if corners[0] != corners[2] {
+                    self.direction.y = -self.direction.y;
+                }
+                if corners[1] != corners[3] {
+                    self.direction.x = -self.direction.x;
+                }
+                break;
+            }
+        }
+        if let Some(index) = brick_index {
+            bricks[index].score = 0;
         }
     }
 }

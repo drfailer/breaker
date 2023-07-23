@@ -18,13 +18,14 @@ pub struct Brick {
     pub y: i32,
     pub score: u32,
     pub size: u32,
+    pub index: usize,
 }
 
 fn run() -> Result<(), String> {
     let mut ui = UI::create_ui("breaker", MAP_WIDTH, MAP_HIGHT)?;
     let mut left = false;
     let mut right = false;
-    let mut ball = ball::Ball::new(200, 200, 10, 0.707, 0.707, 3.5);
+    let mut ball = ball::Ball::new(230, 570, 10, 0.707, -0.707, 3.5);
     let mut pad = pad::Pad::new(200, 580, 70, 10, 8);
     let mut bricks: Vec<Brick> = Vec::new();
     let row_size = (MAP_WIDTH / BRICK_SIZE) as i32;
@@ -34,10 +35,11 @@ fn run() -> Result<(), String> {
     // create the bricks
     for i in 0..bricks_number {
         bricks.push(Brick {
-            x: i % row_size,
-            y: i / row_size,
+            x: (i % row_size) * BRICK_SIZE as i32,
+            y: (i / row_size) * BRICK_SIZE as i32,
             score: 1,
             size: BRICK_SIZE,
+            index: i as usize,
         });
     }
 
@@ -76,8 +78,9 @@ fn run() -> Result<(), String> {
             pad.go_right()
         }
         ui.draw(&ball, &pad, &bricks);
-        ball.update(&pad);
+        ball.update(&pad, &mut bricks);
         std::thread::sleep(std::time::Duration::from_millis(10));
+        // std::thread::sleep(std::time::Duration::from_millis(1000));
     }
     Ok(())
 }
