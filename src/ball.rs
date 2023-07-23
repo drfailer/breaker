@@ -1,4 +1,4 @@
-use crate::{pad::Pad, Brick};
+use crate::{pad::Pad, brick::Brick};
 
 /* The direction is a 2D vector where the first point is always at (0, 0).
  * The second point is somewhere on the trigonometric circle around (0, 0). For
@@ -18,17 +18,6 @@ pub struct Ball {
     pub speed: f32,
 }
 
-fn point_in_bound(x: i32, y: i32, brick: &Brick) -> bool {
-    let mut output = false;
-    if brick.score > 0 {
-        output = x >= brick.x
-            && x <= brick.x + brick.size as i32
-            && y >= brick.y
-            && y <= brick.y + brick.size as i32;
-    }
-    output
-}
-
 fn points_in_bound(x: i32, y: i32, size: u32, brick: &Brick) -> [bool; 4] {
     let i32_size = size as i32;
     let mid = i32_size / 2;
@@ -38,7 +27,7 @@ fn points_in_bound(x: i32, y: i32, size: u32, brick: &Brick) -> [bool; 4] {
         (x + mid, y + i32_size),
         (x, y + mid),
     ]
-    .map(|(a, b)| point_in_bound(a, b, brick))
+    .map(|(a, b)| brick.collision(a, b))
 }
 
 impl Ball {

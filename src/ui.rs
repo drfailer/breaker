@@ -6,7 +6,7 @@ use sdl2::{EventPump, Sdl};
 
 use crate::ball::Ball;
 use crate::pad::Pad;
-use crate::Brick;
+use crate::brick::Brick;
 
 pub struct UI {
     sdl: Sdl,

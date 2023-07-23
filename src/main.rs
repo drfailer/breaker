@@ -1,6 +1,7 @@
 mod ui;
 mod ball;
 mod pad;
+mod brick;
 
 extern crate sdl2;
 
@@ -13,28 +14,20 @@ const MAP_HIGHT: u32 = 600;
 const MAP_WIDTH: u32 = 800;
 const BRICK_SIZE: u32 = 40;
 
-pub struct Brick {
-    pub x: i32,
-    pub y: i32,
-    pub score: u32,
-    pub size: u32,
-    pub index: usize,
-}
-
 fn run() -> Result<(), String> {
     let mut ui = UI::create_ui("breaker", MAP_WIDTH, MAP_HIGHT)?;
     let mut left = false;
     let mut right = false;
     let mut ball = ball::Ball::new(230, 570, 10, 0.707, -0.707, 3.5);
     let mut pad = pad::Pad::new(200, 580, 70, 10, 8);
-    let mut bricks: Vec<Brick> = Vec::new();
+    let mut bricks: Vec<brick::Brick> = Vec::new();
     let row_size = (MAP_WIDTH / BRICK_SIZE) as i32;
     let columns_number = 10;
     let bricks_number = row_size * columns_number;
 
     // create the bricks
     for i in 0..bricks_number {
-        bricks.push(Brick {
+        bricks.push(brick::Brick {
             x: (i % row_size) * BRICK_SIZE as i32,
             y: (i / row_size) * BRICK_SIZE as i32,
             score: 1,
