@@ -19,6 +19,16 @@ pub struct Ball {
 }
 
 impl Ball {
+    pub fn new(x: i32, y: i32, size: u32, v1: f32, v2: f32, speed: f32) -> Self {
+        Ball {
+            x,
+            y,
+            size,
+            direction: Direction { x: v1, y: v2 },
+            speed,
+        }
+    }
+
     fn get_next(&self, direction_coord: f32) -> i32 {
         (direction_coord * self.speed) as i32
     }

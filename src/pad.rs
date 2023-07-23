@@ -7,6 +7,16 @@ pub struct Pad {
 }
 
 impl Pad {
+    pub fn new(x: i32, y: i32, width: u32, height: u32, speed: i32) -> Self {
+        Pad {
+            x,
+            y,
+            width,
+            height,
+            speed,
+        }
+    }
+
     pub fn go_left(&mut self) {
         self.x -= self.speed;
         if self.x < 0 {

@@ -11,31 +11,37 @@ use ui::UI;
 
 const MAP_HIGHT: u32 = 600;
 const MAP_WIDTH: u32 = 800;
+const BRICK_SIZE: u32 = 40;
+
+pub struct Brick {
+    pub x: i32,
+    pub y: i32,
+    pub score: u32,
+    pub size: u32,
+}
 
 fn run() -> Result<(), String> {
     let mut ui = UI::create_ui("breaker", MAP_WIDTH, MAP_HIGHT)?;
     let mut left = false;
     let mut right = false;
-    let vector = ball::Direction {
-        x: 0.707,
-        y: 0.707,
-    };
-    let mut ball = ball::Ball {
-        x: 200,
-        y: 200,
-        size: 10,
-        direction: vector,
-        speed: 3.5
-    };
-    let mut pad = pad::Pad {
-        x: 200,
-        y: 580,
-        width: 70,
-        height: 10,
-        speed: 8,
-    };
-    ui.draw(&ball, &pad);
+    let mut ball = ball::Ball::new(200, 200, 10, 0.707, 0.707, 3.5);
+    let mut pad = pad::Pad::new(200, 580, 70, 10, 8);
+    let mut bricks: Vec<Brick> = Vec::new();
+    let row_size = (MAP_WIDTH / BRICK_SIZE) as i32;
+    let columns_number = 10;
+    let bricks_number = row_size * columns_number;
 
+    // create the bricks
+    for i in 0..bricks_number {
+        bricks.push(Brick {
+            x: i % row_size,
+            y: i / row_size,
+            score: 1,
+            size: BRICK_SIZE,
+        });
+    }
+
+    ui.draw(&ball, &pad, &bricks);
     'mainloop: loop {
         for event in ui.get_events().poll_iter() {
             match event {
@@ -69,7 +75,7 @@ fn run() -> Result<(), String> {
         if right {
             pad.go_right()
         }
-        ui.draw(&ball, &pad);
+        ui.draw(&ball, &pad, &bricks);
         ball.update(&pad);
         std::thread::sleep(std::time::Duration::from_millis(10));
     }

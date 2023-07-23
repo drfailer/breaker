@@ -6,6 +6,7 @@ use sdl2::{EventPump, Sdl};
 
 use crate::ball::Ball;
 use crate::pad::Pad;
+use crate::Brick;
 
 pub struct UI {
     sdl: Sdl,
@@ -39,16 +40,33 @@ impl UI {
 
     fn draw_pad(&mut self, pad: &Pad) {
         self.canvas.set_draw_color(Color::RGB(255, 255, 255));
-        if let Err(_) = self.canvas.fill_rect(Rect::new(pad.x, pad.y, pad.width, pad.height)) {
-            println!("impossible to draw the ball");
+        self.canvas
+            .fill_rect(Rect::new(pad.x, pad.y, pad.width, pad.height))
+            .expect("impossible to draw the ball");
+    }
+
+    fn draw_bricks(&mut self, bricks: &Vec<Brick>) {
+        for brick in bricks {
+            if brick.score > 0 {
+                self.canvas.set_draw_color(Color::RGB(70, 170, 250));
+                self.canvas
+                    .fill_rect(Rect::new(
+                        (brick.x * brick.size as i32) + 1,
+                        (brick.y * brick.size as i32) + 1,
+                        brick.size - 2,
+                        brick.size - 2,
+                    ))
+                    .expect("impossible to draw the ball");
+            }
         }
     }
 
-    pub fn draw(&mut self, ball: &Ball, pad: &Pad) {
+    pub fn draw(&mut self, ball: &Ball, pad: &Pad, bricks: &Vec<Brick>) {
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
         self.draw_ball(ball);
         self.draw_pad(pad);
+        self.draw_bricks(bricks);
         self.canvas.present();
     }
 
