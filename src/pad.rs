@@ -1,9 +1,22 @@
+use crate::drawable::Drawable;
+use sdl2::pixels::Color;
+use sdl2::rect::Rect;
+use sdl2::render::Canvas;
+use sdl2::video::Window;
+
+pub enum PadState {
+    LEFT,
+    RIGHT,
+    STAY,
+}
+
 pub struct Pad {
     pub x: i32,
     pub y: i32,
     pub width: u32,
     pub height: u32,
     pub speed: i32,
+    pub state: PadState,
 }
 
 impl Pad {
@@ -14,6 +27,7 @@ impl Pad {
             width,
             height,
             speed,
+            state: PadState::STAY,
         }
     }
 
@@ -30,5 +44,22 @@ impl Pad {
         if self.x + (self.width as i32) > crate::MAP_WIDTH as i32 {
             self.x = (crate::MAP_WIDTH as i32) - (self.width as i32);
         }
+    }
+
+    pub fn update(&mut self) {
+        match self.state {
+            PadState::LEFT => self.go_left(),
+            PadState::RIGHT => self.go_right(),
+            PadState::STAY => {},
+        }
+    }
+}
+
+impl Drawable for Pad {
+    fn draw(&self, canvas: &mut Canvas<Window>) {
+        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas
+            .fill_rect(Rect::new(self.x, self.y, self.width, self.height))
+            .expect("impossible to draw the ball");
     }
 }

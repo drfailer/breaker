@@ -1,4 +1,8 @@
-use crate::{pad::Pad, brick::Brick};
+use crate::{pad::Pad, brick::Brick, drawable::Drawable};
+use sdl2::video::Window;
+use sdl2::render::Canvas;
+use sdl2::pixels::Color;
+use sdl2::rect::Rect;
 
 /* The direction is a 2D vector where the first point is always at (0, 0).
  * The second point is somewhere on the trigonometric circle around (0, 0). For
@@ -48,7 +52,7 @@ impl Ball {
     /* compute the next position of the ball
      * TODO: take the pad in count
      */
-    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) {
+    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) -> bool {
         let map_w = (crate::MAP_WIDTH as i32) - (self.size as i32);
         let map_h = (crate::MAP_HIGHT as i32) - (self.size as i32);
         let pad_xmin = pad.x;
@@ -76,8 +80,8 @@ impl Ball {
             self.y = pad_y;
             self.direction.y = -self.direction.y;
         } else if self.y >= map_h {
-            self.y = map_h;
-            self.direction.y = -self.direction.y;
+            // early quit since the ball has hit the bottom
+            return false;
         }
 
         for brick in bricks.into_iter() {
@@ -94,7 +98,17 @@ impl Ball {
             }
         }
         if let Some(index) = brick_index {
-            bricks[index].score = 0;
+            bricks[index].score -= 1;
         }
+        return true;
+    }
+}
+
+impl Drawable for Ball {
+    fn draw(&self, canvas: &mut Canvas<Window>) {
+        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas
+            .fill_rect(Rect::new(self.x, self.y, self.size, self.size))
+            .expect("impossible to draw the ball");
     }
 }
