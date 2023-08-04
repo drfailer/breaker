@@ -33,6 +33,10 @@ fn run() -> Result<(), String> {
                     ..
                 } => break 'mainloop,
                 Event::KeyDown {
+                    keycode: Option::Some(Keycode::Space),
+                    ..
+                } => breaker.start(),
+                Event::KeyDown {
                     keycode: Option::Some(Keycode::Left),
                     ..
                 } => breaker.pad_left(),

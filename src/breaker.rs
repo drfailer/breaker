@@ -5,6 +5,7 @@ use crate::{ball::{Ball, BallState}, pad::Pad, brick::{Brick, self}, drawable::D
 pub enum BreakerState {
     OK,
     PAUSE,
+    START,
     VICTORY,
     GAME_OVER,
 }
@@ -29,7 +30,7 @@ impl Breaker {
             pad: Pad::new(((MAP_WIDTH - 70) / 2) as i32, (MAP_HIGHT - 20) as i32, 70, 10, 8),
             bricks: brick::Brick::generate_bricks(bricks_number, crate::BRICK_SIZE, row_size),
             lifes: 3,
-            state: BreakerState::OK,
+            state: BreakerState::START,
         }
     }
 
@@ -49,6 +50,13 @@ impl Breaker {
         self.pad.stay();
     }
 
+    pub fn start(&mut self) {
+        match self.state {
+            BreakerState::START => self.state = BreakerState::OK,
+            _ => {},
+        }
+    }
+
     fn update_ok(&mut self) -> BreakerState {
         self.pad.update();
         match self.ball.update(&self.pad, &mut self.bricks) {
@@ -57,6 +65,7 @@ impl Breaker {
                 self.lifes -= 1;
                 self.pad.reset();
                 self.ball.reset();
+                self.state = BreakerState::START;
             },
         }
         // output game over if lifes are null
