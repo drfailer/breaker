@@ -1,8 +1,12 @@
-use crate::{ball::Ball, pad::Pad, brick::{Brick, self}};
+use sdl2::{video::Window, render::Canvas};
 
-enum BreakerState {
+use crate::{ball::{Ball, BallState}, pad::Pad, brick::{Brick, self}, drawable::Drawable};
+
+pub enum BreakerState {
     OK,
-    END(bool),
+    PAUSE,
+    VICTORY,
+    GAME_OVER,
 }
 
 pub struct Breaker {
@@ -29,7 +33,50 @@ impl Breaker {
         }
     }
 
+    pub fn pad_left(&mut self) {
+        self.pad.left();
+    }
+
+    pub fn pad_right(&mut self) {
+        self.pad.right();
+    }
+
+    pub fn pad_stay(&mut self) {
+        self.pad.stay();
+    }
+
+    fn update_ok(&mut self) -> BreakerState {
+        self.pad.update();
+        match self.ball.update(&self.pad, &mut self.bricks) {
+            BallState::OK => {},
+            _ => {
+                self.lifes -= 1;
+                // TODO: reset the game
+            },
+        }
+        // output game over if lifes are null
+        // TODO: detect victory
+        if self.lifes == 0 {
+            BreakerState::GAME_OVER
+        } else {
+            BreakerState::OK
+        }
+    }
+
+    // NOTE: this may be removed depending on the implementation of the pause
     pub fn update(&mut self) -> BreakerState {
-        BreakerState::OK
+        match self.state {
+            BreakerState::OK => self.update_ok(),
+            _ => BreakerState::OK,
+        }
+    }
+}
+
+impl Drawable for Breaker {
+    fn draw(&self, canvas: &mut Canvas<Window>) {
+        // todo: draw ui
+        self.ball.draw(canvas);
+        self.pad.draw(canvas);
+        self.bricks.draw(canvas);
     }
 }

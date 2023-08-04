@@ -31,7 +31,7 @@ impl Pad {
         }
     }
 
-    pub fn go_left(&mut self) {
+    fn go_left(&mut self) {
         self.x -= self.speed;
         if self.x < 0 {
             self.x = 0;
@@ -39,11 +39,23 @@ impl Pad {
     }
 
     // TODO: change types
-    pub fn go_right(&mut self) {
+    fn go_right(&mut self) {
         self.x += self.speed;
         if self.x + (self.width as i32) > crate::MAP_WIDTH as i32 {
             self.x = (crate::MAP_WIDTH as i32) - (self.width as i32);
         }
+    }
+
+    pub fn left(&mut self) {
+        self.state = PadState::LEFT;
+    }
+
+    pub fn right(&mut self) {
+        self.state = PadState::RIGHT;
+    }
+
+    pub fn stay(&mut self) {
+        self.state = PadState::STAY;
     }
 
     pub fn update(&mut self) {

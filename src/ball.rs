@@ -4,6 +4,11 @@ use sdl2::render::Canvas;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 
+pub enum BallState {
+    OK,
+    FALLEN,
+}
+
 /* The direction is a 2D vector where the first point is always at (0, 0).
  * The second point is somewhere on the trigonometric circle around (0, 0). For
  * instance, if the second is at (sqrt(2)/2, sqrt(2)/2), the ball will bounce
@@ -52,7 +57,7 @@ impl Ball {
     /* compute the next position of the ball
      * TODO: take the pad in count
      */
-    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) -> bool {
+    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) -> BallState {
         let map_w = (crate::MAP_WIDTH as i32) - (self.size as i32);
         let map_h = (crate::MAP_HIGHT as i32) - (self.size as i32);
         let pad_xmin = pad.x;
@@ -81,7 +86,7 @@ impl Ball {
             self.direction.y = -self.direction.y;
         } else if self.y >= map_h {
             // early quit since the ball has hit the bottom
-            return false;
+            return BallState::FALLEN;
         }
 
         for brick in bricks.into_iter() {
@@ -100,7 +105,7 @@ impl Ball {
         if let Some(index) = brick_index {
             bricks[index].score -= 1;
         }
-        return true;
+        return BallState::OK;
     }
 }
 
