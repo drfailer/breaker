@@ -88,7 +88,7 @@ impl Breaker {
     /*------------------------------------------------------------------------------------------*/
     fn update_ok(&mut self) -> BreakerState {
         self.pad.update();
-        match self.ball.update(&self.pad, &mut self.bricks) {
+        match self.ball.update(&self.pad, &mut self.bricks, self.pad.get_state()) {
             BallState::OK => {}
             BallState::FALLEN => {
                 self.lifes -= 1;

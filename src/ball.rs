@@ -1,3 +1,4 @@
+use crate::pad::{PadState, self};
 use crate::{MAP_WIDTH, MAP_HIGHT};
 use crate::{pad::Pad, brick::Brick, drawable::Drawable};
 use sdl2::video::Window;
@@ -55,15 +56,49 @@ impl Ball {
         (direction_coord * self.speed) as i32
     }
 
+    fn update_direction(&mut self, pad_state: PadState) {
+        match pad_state {
+            PadState::RIGHT => {
+                if self.direction.x > 0.0 { // the ball goes to the right
+                    if self.direction.x < 0.9 {
+                        self.direction.x += 0.1;
+                        self.direction.y += 0.1;
+                    }
+                } else {
+                    if self.direction.x > -0.9 {
+                        self.direction.x += 0.1;
+                        self.direction.y -= 0.1;
+                    }
+                }
+            },
+            PadState::LEFT => {
+                if self.direction.x < 0.0 { // the ball goes to the left
+                    if self.direction.x > -0.9 {
+                        self.direction.x -= 0.1;
+                        self.direction.y += 0.1;
+                    }
+                } else {
+                    if self.direction.x < 0.9 {
+                        self.direction.x -= 0.1;
+                        self.direction.y -= 0.1;
+                    }
+                }
+            },
+            PadState::STAY => {},
+        }
+    }
+
     pub fn reset(&mut self) {
         self.x = ((MAP_WIDTH - 10) / 2) as i32;
         self.y = (MAP_HIGHT - 30) as i32;
+        self.direction.x = 0.707;
+        self.direction.y = -0.707;
     }
 
     /* compute the next position of the ball
      * TODO: take the pad in count
      */
-    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>) -> BallState {
+    pub fn update(&mut self, pad: &Pad, bricks: &mut Vec<Brick>, pad_state: PadState) -> BallState {
         let map_w = (crate::MAP_WIDTH as i32) - (self.size as i32);
         let map_h = (crate::MAP_HIGHT as i32) - (self.size as i32);
         let pad_xmin = pad.x;
@@ -90,6 +125,7 @@ impl Ball {
         } else if self.y >= pad_y && self.x >= pad_xmin && self.x <= pad_xmax {
             self.y = pad_y;
             self.direction.y = -self.direction.y;
+            self.update_direction(pad_state);
         } else if self.y >= map_h {
             // early quit since the ball has hit the bottom
             return BallState::FALLEN;

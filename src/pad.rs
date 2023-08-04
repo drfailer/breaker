@@ -5,6 +5,7 @@ use sdl2::rect::Rect;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 
+#[derive(Clone, Copy)]
 pub enum PadState {
     LEFT,
     RIGHT,
@@ -62,6 +63,10 @@ impl Pad {
     pub fn reset(&mut self) {
         self.x = ((MAP_WIDTH - 70) / 2) as i32;
         self.y = (MAP_HIGHT - 20) as i32;
+    }
+
+    pub fn get_state(&self) -> PadState {
+        self.state
     }
 
     pub fn update(&mut self) {
