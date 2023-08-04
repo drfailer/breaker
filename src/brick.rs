@@ -1,3 +1,4 @@
+use crate::{BRICK_SIZE, HUD_SIZE};
 use crate::drawable::Drawable;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
@@ -30,7 +31,7 @@ impl Brick {
         for i in 0..number {
             bricks.push(Self {
                 x: (i % row_size) * brick_size as i32,
-                y: (i / row_size) * brick_size as i32,
+                y: (i / row_size) * brick_size as i32 + HUD_SIZE as i32,
                 score: (row_number - (i / row_size)) as u32,
                 size: brick_size,
                 index: i as usize,

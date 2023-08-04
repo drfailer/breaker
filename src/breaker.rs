@@ -1,11 +1,11 @@
-use sdl2::{render::Canvas, video::Window};
+use sdl2::{pixels::Color, rect::Rect, render::Canvas, video::Window};
 
 use crate::{
     ball::{Ball, BallState},
     brick::{self, Brick},
     drawable::Drawable,
     pad::Pad,
-    MAP_HIGHT, MAP_WIDTH, ROW_NUMBER,
+    HUD_SIZE, LIFE_SIZE, MAP_HIGHT, MAP_WIDTH, ROW_NUMBER,
 };
 
 pub enum BreakerState {
@@ -117,7 +117,26 @@ impl Breaker {
 
 impl Drawable for Breaker {
     fn draw(&self, canvas: &mut Canvas<Window>) {
-        // todo: draw ui
+        let space_between_lifes = 20;
+        // draw hud
+        canvas.set_draw_color(Color::RGB(65, 75, 80));
+        canvas
+            .fill_rect(Rect::new(0, 0, MAP_WIDTH, HUD_SIZE))
+            .expect("impossible to draw the hud.");
+
+        canvas.set_draw_color(Color::RGB(255, 0, 0));
+        for i in 0..self.lifes as i32 {
+            canvas
+                .fill_rect(Rect::new(
+                    space_between_lifes + i * (space_between_lifes + LIFE_SIZE as i32),
+                    ((HUD_SIZE - LIFE_SIZE) / 2) as i32,
+                    LIFE_SIZE,
+                    LIFE_SIZE,
+                ))
+                .expect("impossible to draw lifes.");
+        }
+
+        // draw all the components
         self.ball.draw(canvas);
         self.pad.draw(canvas);
         self.bricks.draw(canvas);
