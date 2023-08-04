@@ -1,3 +1,4 @@
+use crate::{MAP_WIDTH, MAP_HIGHT};
 use crate::{pad::Pad, brick::Brick, drawable::Drawable};
 use sdl2::video::Window;
 use sdl2::render::Canvas;
@@ -20,11 +21,11 @@ pub struct Direction {
 }
 
 pub struct Ball {
-    pub x: i32,
-    pub y: i32,
-    pub size: u32,
-    pub direction: Direction,
-    pub speed: f32,
+    x: i32,
+    y: i32,
+    size: u32,
+    direction: Direction,
+    speed: f32,
 }
 
 fn points_in_bound(x: i32, y: i32, size: u32, brick: &Brick) -> [bool; 4] {
@@ -52,6 +53,11 @@ impl Ball {
 
     fn get_next(&self, direction_coord: f32) -> i32 {
         (direction_coord * self.speed) as i32
+    }
+
+    pub fn reset(&mut self) {
+        self.x = ((MAP_WIDTH - 10) / 2) as i32;
+        self.y = (MAP_HIGHT - 30) as i32;
     }
 
     /* compute the next position of the ball

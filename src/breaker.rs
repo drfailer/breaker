@@ -1,6 +1,6 @@
 use sdl2::{video::Window, render::Canvas};
 
-use crate::{ball::{Ball, BallState}, pad::Pad, brick::{Brick, self}, drawable::Drawable};
+use crate::{ball::{Ball, BallState}, pad::Pad, brick::{Brick, self}, drawable::Drawable, MAP_HIGHT, MAP_WIDTH};
 
 pub enum BreakerState {
     OK,
@@ -25,12 +25,16 @@ impl Breaker {
         let bricks_number = row_size * columns_number;
 
         Breaker {
-            ball: Ball::new(230, 570, 10, 0.707, -0.707, 3.5),
-            pad: Pad::new(200, 580, 70, 10, 8),
+            ball: Ball::new(((MAP_WIDTH - 10) / 2) as i32, (MAP_HIGHT - 30) as i32, 10, 0.707, -0.707, 3.5),
+            pad: Pad::new(((MAP_WIDTH - 70) / 2) as i32, (MAP_HIGHT - 20) as i32, 70, 10, 8),
             bricks: brick::Brick::generate_bricks(bricks_number, crate::BRICK_SIZE, row_size),
             lifes: 3,
             state: BreakerState::OK,
         }
+    }
+
+    pub fn get_lifes(&self) -> u8 {
+        self.lifes
     }
 
     pub fn pad_left(&mut self) {
@@ -49,9 +53,10 @@ impl Breaker {
         self.pad.update();
         match self.ball.update(&self.pad, &mut self.bricks) {
             BallState::OK => {},
-            _ => {
+            BallState::FALLEN => {
                 self.lifes -= 1;
-                // TODO: reset the game
+                self.pad.reset();
+                self.ball.reset();
             },
         }
         // output game over if lifes are null

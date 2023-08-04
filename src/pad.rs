@@ -1,3 +1,4 @@
+use crate::{MAP_HIGHT, MAP_WIDTH};
 use crate::drawable::Drawable;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
@@ -56,6 +57,11 @@ impl Pad {
 
     pub fn stay(&mut self) {
         self.state = PadState::STAY;
+    }
+
+    pub fn reset(&mut self) {
+        self.x = ((MAP_WIDTH - 70) / 2) as i32;
+        self.y = (MAP_HIGHT - 20) as i32;
     }
 
     pub fn update(&mut self) {
