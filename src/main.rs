@@ -17,6 +17,7 @@ use ui::UI;
 const MAP_HIGHT: u32 = 600;
 const MAP_WIDTH: u32 = 800;
 const BRICK_SIZE: u32 = 40;
+const ROW_NUMBER: u32 = 9;
 
 fn run() -> Result<(), String> {
     let mut ui = UI::create_ui("breaker", MAP_WIDTH, MAP_HIGHT)?;
